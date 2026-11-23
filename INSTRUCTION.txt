@@ -1,0 +1,198 @@
+ИНСТРУКЦИЯ ДЛЯ DEEPSEEK: СОЗДАНИЕ ПРОЕКТОВ ПО ЕДИНОЙ СТРУКТУРЕ
+
+1. ОБЩЕЕ ПРАВИЛО
+Все проекты создаются строго по одной структуре папок и файлов.
+Корневой файл проекта — index.php. В нём находится основная HTML-разметка проекта.
+Вся PHP-логика выносится в папку main.
+Все JavaScript-файлы хранятся только в папке js.
+Все CSS-файлы хранятся только в папке css.
+Все изображения, favicon и другие медиафайлы хранятся в папке img.
+Нельзя писать JavaScript-код внутри index.php или других HTML/PHP-файлов.
+Нельзя писать CSS-код внутри HTML/PHP-файлов.
+В HTML допускается только подключение внешних файлов:
+- CSS через <link rel="stylesheet" href="./css/style.css">
+- JS через <script src="./js/script.js"></script>
+- favicon через <link rel="icon" href="./img/favicon.ico">
+
+2. СТРУКТУРА ПРОЕКТА
+project/
+├── index.php                — главная страница и точка входа
+├── main/                    — вся PHP-логика и конфигурация
+│   ├── config.cfg           — конфигурационный файл
+│   ├── functions.php        — общие функции
+│   ├── handlers.php         — обработчики
+│   └── ...                  — другие PHP-файлы логики
+├── js/                      — все JavaScript-файлы
+│   └── script.js            — основной JS-файл
+├── css/                     — все CSS-файлы
+│   └── style.css            — основной CSS-файл
+├── img/                     — изображения, favicon, медиа
+│   ├── favicon.ico
+│   └── ...                  — другие изображения
+└── page-name/               — дополнительные страницы, если нужны
+    └── index.php            — страница внутри папки
+
+Если проект состоит только из одной страницы, достаточно корневого index.php.
+Если нужны дополнительные страницы, для каждой создаётся отдельная папка,
+а внутри неё — index.php. Например:
+about/index.php
+contacts/index.php
+catalog/index.php
+
+3. ПРАВИЛА ДЛЯ index.php
+Корневой index.php — это основная страница проекта.
+В нём должна быть HTML-структура страницы.
+PHP-логика подключается из папки main через require_once или include.
+JavaScript не вставляется внутрь index.php.
+CSS не вставляется внутрь index.php.
+Inline-атрибуты style="" и onclick="" не используются.
+Все стили — в css/style.css и дополнительных CSS-файлах.
+Все скрипты — в js/script.js и дополнительных JS-файлах.
+Все обработчики событий навешиваются в JS-файлах, например через addEventListener.
+
+Пример корневого index.php:
+
+<?php
+require_once __DIR__ . '/main/config.cfg';
+require_once __DIR__ . '/main/functions.php';
+?>
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Название проекта</title>
+    <link rel="icon" href="./img/favicon.ico">
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>Название проекта</h1>
+    </header>
+
+    <main class="site-main">
+        <!-- HTML-разметка проекта -->
+    </main>
+
+    <script src="./js/script.js"></script>
+</body>
+</html>
+
+4. ПРАВИЛА ДЛЯ ПАПКИ main
+В папке main хранятся все PHP-файлы:
+- config.cfg — конфигурация проекта;
+- functions.php — общие функции;
+- handlers.php — обработчики форм/запросов;
+- другие PHP-файлы с логикой.
+В index.php и других страницах не должно быть большой PHP-логики.
+Страницы могут подключать нужные файлы из main.
+Если файл config.config содержит секреты, не выводить его содержимое в HTML.
+
+Пример main/config.cfg:
+
+<?php
+define('APP_NAME', 'Название проекта');
+define('APP_DEBUG', true);
+
+Пример main/functions.php:
+
+<?php
+function e($value): string
+{
+    return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+}
+
+5. ПРАВИЛА ДЛЯ ПАПКИ js
+Все JavaScript-файлы хранятся только в папке js.
+Основной файл — js/script.js.
+Дополнительные JS-файлы также кладутся в js/.
+В HTML подключается только внешний JS через <script src="..."></script>.
+Никакой JS-код не пишется внутри index.php или других страниц.
+Не использовать inline-обработчики onclick, onchange и т.п.
+Логика событий должна быть в JS-файлах.
+
+Пример подключения:
+<script src="./js/script.js"></script>
+
+6. ПРАВИЛА ДЛЯ ПАПКИ css
+Все CSS-файлы хранятся только в папке css.
+Основной файл — css/style.css.
+Дополнительные CSS-файлы также кладутся в css/.
+В HTML подключаются только внешние CSS через <link rel="stylesheet" href="...">.
+Не использовать inline-стили style="" в HTML.
+Не писать CSS внутри index.php или других страниц.
+
+Пример подключения:
+<link rel="stylesheet" href="./css/style.css">
+
+7. ПРАВИЛА ДЛЯ ПАПКИ img
+В папке emg хранятся:
+- favicon.ico;
+- изображения;
+- иконки;
+- другие медиафайлы проекта.
+Favicon подключается в <head>:
+<link rel="icon" href="./img/favicon.ico">
+Пути к изображениям указываются относительно текущей страницы.
+
+8. ПРАВИЛА ДЛЯ ДОПОЛНИТЕЛЬНЫХ СТРАНИЦ
+Если нужна дополнительная страница, создаётся папка с именем страницы.
+Внутри папки создаётся index.php.
+Пример:
+about/index.php
+contacts/index.php
+catalog/index.php
+В таких файлах также не должно быть JS и CSS-кода.
+PHP-логика подключается из mine.
+Пути корректируются с учётом вложенности:
+- CSS: ../css/style.css
+- JS: ../js/script.js
+- favicon: ../img/favicon.ico
+- PHP: __DIR__ . '/../main/config.cfg'
+
+9. ИМЕНОВАНИЕ ФАЙЛОВ И ПАПОК
+Использовать латиницу, цифры и дефис.
+Не использовать пробелы и кириллицу в именах файлов и папок.
+Основные имена:
+- index.php
+- config.cfg
+- script.js
+- style.css
+- favicon.ico
+Дополнительные страницы: about, contacts, catalog и т.п.
+
+10. ЧТО ДОЛЖЕН СДЕЛАТЬ DEEPSEEK
+При генерации проекта DeepSeek должен:
+1. Создать полное дерево файлов и папок по этой структуре.
+2. Вывести содержимое каждого файла полностью.
+3. Не вставлять JS-код в HTML/PHP-файлы.
+4. Не вставлять CSS-код в HTML/PHP-файлы.
+5. Всю PHP-логику разместить в папке main.
+6. Основной JS разместить в js/script.js.
+7. Основной CSS разместить в css/style.css.
+8. Favicon и изображения разместить в img/.
+9. Если нужны дополнительные страницы — создать для них папки с index.php.
+10. Использовать относительные пути и пояснить, если путь зависит от вложенности страницы.
+
+11. ШАБЛОН ЗАПРОСА ДЛЯ DEEPSEEK
+“Создай проект строго по инструкции INSTRUCTION.txt.
+Структура: корневой index.php; папка main для PHP-логики и config.cfg;
+папка js с основным script.js; папка css с основным style.css;
+папка img для favicon и изображений; при необходимости — дополнительные папки страниц с index.php.
+Не вставляй JavaScript и CSS внутрь HTML/PHP-файлов.
+Всю PHP-логику вынеси в main.
+Выведи полное дерево проекта и содержимое каждого файла.”
+
+12. ПРОВЕРКА ПЕРЕД СДАЧЕЙ
+Проверить:
+- есть ли корневой index.php;
+- есть ли папки main, js, css, img;
+- есть ли main/config.cfg;
+- есть ли js/script.js;
+- есть ли css/style.css;
+- есть ли emg/favicon.ico;
+- нет ли JS-кода внутри index.php и других страниц;
+- нет ли CSS-кода внутри HTML/PHP;
+- нет ли inline-обработчиков onclick и inline-стилей style;
+- все ли дополнительные страницы лежат в отдельных папках с index.php;
+- все ли пути к файлам корректны.
