@@ -196,3 +196,242 @@ PHP-логика подключается из mine.
 - нет ли inline-обработчиков onclick и inline-стилей style;
 - все ли дополнительные страницы лежат в отдельных папках с index.php;
 - все ли пути к файлам корректны.
+
+13. ЕДИНАЯ ТЁМНАЯ ТЕМА (DESIGN SYSTEM)
+=====================================
+
+13.1. ОБЩЕЕ ПРАВИЛО
+Все проекты используют единую тёмную тему оформления.
+Тема описана в этом разделе и является обязательной.
+Запрещено менять цвета, шрифты, радиусы, тени и прочие
+токены дизайна без необходимости.
+Если проекту нужен новый компонент — он стилизуется
+на основе токенов из этого раздела.
+
+13.2. ЦВЕТОВЫЕ ТОКЕНЫ (CSS-ПЕРЕМЕННЫЕ)
+В начале css/style.css обязательно объявляется блок :root
+со следующими переменными:
+
+:root {
+    --bg: #0b0f17;
+    --bg-elev: #111827;
+    --bg-card: #151b26;
+    --bg-input: #0f141d;
+    --border: #1f2937;
+    --border-strong: #2b3648;
+    --text: #e5e7eb;
+    --text-dim: #9ca3af;
+    --text-mute: #6b7280;
+    --accent: #6366f1;
+    --accent-hover: #818cf8;
+    --accent-soft: rgba(99, 102, 241, 0.12);
+    --success: #10b981;
+    --success-soft: rgba(16, 185, 129, 0.12);
+    --error: #ef4444;
+    --error-soft: rgba(239, 68, 68, 0.12);
+    --warn: #f59e0b;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+    --mono: ui-monospace, "SFMono-Regular", "JetBrains Mono", Menlo, Consolas, monospace;
+}
+
+13.3. ФОН И ОСНОВНОЙ ШРИФТ
+body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background:
+        radial-gradient(1200px 600px at 80% -10%, rgba(99, 102, 241, 0.10), transparent 60%),
+        radial-gradient(900px 500px at -10% 110%, rgba(16, 185, 129, 0.07), transparent 60%),
+        var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+}
+
+Обязательно в <head> указывать:
+<meta name="color-scheme" content="dark">
+
+13.4. ШАПКА (STICKY-HEADER)
+.site-header {
+    border-bottom: 1px solid var(--border);
+    background: rgba(11, 15, 23, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 18px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+Внутри шапки используется логотип-точка с градиентом:
+.logo-dot {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), #22d3ee);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    color: #fff;
+    font-size: 15px;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.06),
+                0 6px 20px rgba(99,102,241,0.35);
+}
+
+13.5. КАРТОЧКИ (CARD)
+.card {
+    background: linear-gradient(180deg, var(--bg-card), var(--bg-elev));
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    box-shadow: var(--shadow);
+}
+
+.card__title {
+    margin: 0 0 6px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text);
+}
+
+.card__title::before {
+    content: "";
+    width: 4px;
+    height: 16px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, var(--accent), #22d3ee);
+}
+
+13.6. ПОЛЯ ВВОДА
+Все input и textarea:
+- фон: var(--bg-input)
+- рамка: 1px solid var(--border-strong)
+- радиус: var(--radius-sm)
+- цвет текста: var(--text)
+- placeholder: var(--text-mute)
+- при фокусе: border-color: var(--accent)
+             box-shadow: 0 0 0 3px var(--accent-soft)
+
+Для технических полей (URL, JSON, заголовки, ответ сервера)
+использовать font-family: var(--mono).
+
+13.7. КНОПКИ
+Основные классы кнопок:
+.btn--primary   — градиент linear-gradient(135deg, var(--accent), #4f46e5),
+                  цвет #fff, тень 0 6px 20px rgba(99,102,241,0.30)
+.btn--secondary — фон var(--bg-input), рамка var(--border-strong)
+.btn--ghost     — прозрачная, рамка var(--border-strong)
+.btn--danger    — прозрачная, при hover красный (var(--error))
+
+Все кнопки:
+border-radius: var(--radius-sm);
+padding: 10px 18px;
+font-weight: 600;
+transition: all .15s;
+При :active — transform: translateY(1px).
+
+13.8. СТАТУСЫ (SUCCESS / ERROR)
+.response-status         — нейтральный (фон var(--bg-input),
+                           рамка var(--border-strong),
+                           цвет var(--text-mute))
+.response-status.ok      — фон var(--success-soft),
+                           цвет var(--success),
+                           рамка rgba(16,185,129,0.4)
+.response-status.error   — фон var(--error-soft),
+                           цвет var(--error),
+                           рамка rgba(239,68,68,0.4)
+Радиус статуса: 999px (pill).
+Шрифт: var(--mono), 0.78rem.
+
+13.9. БЛОК ОТВЕТА / КОДА (PRE)
+.response-output {
+    background: #080b11;
+    color: #cbd5e1;
+    padding: 16px 18px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 0.83rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 520px;
+    overflow-y: auto;
+}
+
+13.10. СКРОЛЛБАР
+Кастомный скроллбар для блоков кода и textarea:
+ширина 10px;
+дорожка — прозрачная;
+ползунок — #1f2937 (hover — #2b3648);
+border-radius: 10px.
+
+13.11. СТРОКИ «КЛЮЧ — ЗНАЧЕНИЕ» (KV-ROWS)
+.kv-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 8px;
+    align-items: center;
+    animation: fadeIn .2s ease;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+13.12. RADIO / CHECKBOX В ВИДЕ PILL
+Методы запроса, выбор режимов и т.п. оформляются как pill-кнопки:
+.radio {
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    background: var(--bg-input);
+    color: var(--text-dim);
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all .15s;
+}
+Активный вариант (через :has(input:checked)):
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 0 3px var(--accent-soft);
+
+13.13. АДАПТИВ
+Медиа-запрос max-width: 600px обязателен.
+На мобильных:
+- .kv-row становится в 2 колонки,
+- кнопка удаления уходит на новую строку,
+- .site-main padding: 20px 12px 60px,
+- .card padding: 18px.
+
+13.14. ЧТО ЗАПРЕЩЕНО
+- Использовать светлый фон.
+- Заменять акцентный цвет (--accent) на другой.
+- Писать свои цвета вне токенов :root.
+- Убирать градиенты на фоне body и на .btn--primary.
+- Использовать стандартный (системный) скроллбар в блоках кода.
+- Менять шрифты (system-ui для текста, var(--mono) для кода).
+
+13.15. ГОТОВЫЙ ШАБЛОН
+Полный CSS-шаблон тёмной темы хранится в файле
+main/theme.css и при необходимости подключается
+в дополнение к css/style.css.
+Если проект простой — можно сразу копировать
+содержимое theme.css в начало css/style.css.
+
+13.16. ПРОВЕРКА ПЕРЕД СДАЧЕЙ (дополнение к п.12)
+- В css/style.css есть блок :root с токенами из п.13.2.
+- В <head> есть <meta name="color-scheme" content="dark">.
+- Фон body содержит оба радиальных градиента.
+- Кнопка «Отправить / Основное действие» — с градиентом.
+- Все input/textarea имеют тёмный фон и фокус-обводку.
+- Все статусы (успех/ошибка) используют success/error токены.
+- Блоки кода используют моноширинный шрифт и тёмный фон #080b11.
+- Скроллбар кастомный.
+- Проверено на ширине 360px (мобильный) и 1280px (десктоп).
